@@ -44,9 +44,15 @@ class ParticipantController extends Controller
         ]);
         $participant->save();
     
-        $partida = Partida::where('partidaId', $request['partida']['partidaId'] )->with('joc','organitzador', 'participants' )->get();
+        $partida = Partida::where('partidaId', $request['partida']['partidaId'] )->with('joc','organitzador', 'participants','participants.participant'  )->get();
 
-        $response = ['partides' => $partida];
+        if(count($partida) > 0){
+            $status = 201;
+        }else{
+            $status = 204;
+        }
+        
+        $response = ['partides' => $partida, 'status' => $status];
         
         return response()->json($response);  
             
@@ -89,9 +95,11 @@ class ParticipantController extends Controller
                 ['soci', $request['participant'] ]
                 ])->delete();
             
-        $partida = Partida::where('partidaId', $request['partida']['partidaId'] )->with('joc','organitzador', 'participants' )->get();
+        $partida = Partida::where('partidaId', $request['partida']['partidaId'] )->with('joc','organitzador', 'participants','participants.participant'  )->get();
 
-        $response = ['partides' => $partida];
+       
+       $status = 210;
+       $response = ['partides' => $partida, 'status' => $status];
         
         return response()->json($response);  
        

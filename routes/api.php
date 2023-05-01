@@ -43,10 +43,12 @@ Route::middleware('auth:sanctum')->post('/jocs','App\Http\Controllers\ColeccioCo
 Route::get('/jocs/bggsearchbyname/{query}','App\Http\Controllers\ColeccioController@searchBggByName');
 Route::get('/jocs/{jocId}', 'App\Http\Controllers\ColeccioController@show');
 Route::middleware('auth:sanctum')->delete('/jocs/{jocId}', 'App\Http\Controllers\ColeccioController@destroy');
+Route::middleware('auth:sanctum')->patch('/jocs', 'App\Http\Controllers\ColeccioController@update');
 
 /** Jocs */
 Route::get('/jocs/bgg/{jocId}', 'App\Http\Controllers\JocController@show');
-//router.patch('/', verifyToken, jocCtrl.updateJoc)
+Route::get('/jocs/bggVideos/{jocId}', 'App\Http\Controllers\JocController@getVideos');
+
 
 
 /*** PRESTECS */

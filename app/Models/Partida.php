@@ -35,6 +35,11 @@ class Partida extends Model
 
     public function participants()
     {
+        return $this->hasMany(Participant::class,'partidaId','partidaId');
+    }
+
+   /* public function participants()
+    {
         //return $this->hasMany(Participant::class,'partidaId','partidaId');
         return $this->hasManyThrough(
                 User::class,
@@ -49,7 +54,7 @@ class Partida extends Model
             'country_id', // Foreign key on users table... 
             'user_id', // Foreign key on posts table...
             'id', // Local key on countries table...
-            'id' // Local key on users table...*/
-    }
+            'id' // Local key on users table...*
+    }*/
 
 }

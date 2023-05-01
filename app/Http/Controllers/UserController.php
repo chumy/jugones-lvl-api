@@ -22,7 +22,14 @@ class UserController extends Controller
         Log::info($usuaris);
 
         //$items = $this->getListadoPrestecs();
-        $response = ['usuaris' => $usuaris];
+        
+        
+        if(count($usuaris) > 0){
+            $status = 200;
+        }else{
+            $status = 204;
+        }
+        $response = ['usuaris' => $usuaris, 'status' => $status];
         
         return response()->json($response);   
     }
@@ -54,8 +61,15 @@ class UserController extends Controller
 
 
         $usuaris = User::all();
+
+        if(count($usuaris) > 0){
+            $status = 201;
+        }else{
+            $status = 204;
+        }
+        $response = ['usuaris' => $usuaris, 'status' => $status];
         
-        $response = ['usuaris' => $usuaris]; 
+        return response()->json($response);   
 
   
     }
@@ -92,8 +106,12 @@ class UserController extends Controller
         $usuari->rol = $request['rol'];
         $usuari->parella = $request['parella'];
         $usuari->save();
-
         
+        
+        $status = 211;
+        
+        $response = ['usuaris' => $usuari, 'status' => $status];
+
         return response()->json($usuari);   
     }
 
@@ -107,7 +125,12 @@ class UserController extends Controller
 
         $usuaris = User::all();
 
-        $response = ['usuaris' => $usuaris];
+        if(count($usuaris) > 0){
+            $status = 210;
+        }else{
+            $status = 204;
+        }
+        $response = ['usuaris' => $usuaris, 'status' => $usuaris];
                     
         return response()->json($response);
     }

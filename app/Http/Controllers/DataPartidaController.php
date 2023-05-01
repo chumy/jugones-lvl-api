@@ -35,7 +35,7 @@ class DataPartidaController extends Controller
     {
         //
 
-        Log::Info("Creando data");
+        Log::Info("Creando fecha propuesta");
         $data = DataPartida::create([
             'partidaId' => $request['partida']['partidaId'],        
             'data' => $request['data'],
@@ -62,9 +62,23 @@ class DataPartidaController extends Controller
         $participant->save();
 
         
-        $items = DataPartida::where('partidaId', $partidaId)->with('participants')->get();
+        $items = DataPartida::where('partidaId', $request['partida']['partidaId'])->with('participants')->get();
+        $items = Partida::where('partidaId',  $request['partida']['partidaId'])->with('joc','organitzador', 'participants', 'participants.participant' )->get();
 
-        $response = ['partides' => $items];
+        
+            //$status = 200;
+            
+            //$response = ['partides' => $partida, 'status' => $status];
+
+        if(count($items) > 0){
+            $status = 201;
+        }else{
+            $status = 204;
+        }
+        Log::debug($status);
+        
+        $response = ['partides' => $items, 'status' => $status];
+
         
         return response()->json($response);   
 
@@ -76,11 +90,18 @@ class DataPartidaController extends Controller
     public function show(string $partidaId)
     {
         //
+
+        Log::info('Obteniendo fechas propuestas');
         $items = DataPartida::where('partidaId', $partidaId)->with('participants')->get();
 
-        //Log::info($items);
+       
+        $status = 200;
+       
 
-        $response = ['partides' => $items];
+        Log::debug($status);
+        
+        $response = ['partides' => $items, 'status' => $status];
+    
         
         return response()->json($response);   
     }
@@ -116,7 +137,11 @@ class DataPartidaController extends Controller
 
          $items = DataPartida::where('partidaId', $request['partida']['partidaId'])->with('participants')->get();
  
-         $response = ['partides' => $items];
+         
+            $status = 210;
+        
+        
+        $response = ['partides' => $items, 'status' => $status];
          
          return response()->json($response);   
     }

@@ -15,10 +15,11 @@ class PrestecController extends Controller
      */
     public function index()
     {
+        Log::info('Listado de Prestamos prestamo');
     
         $prestecs = Prestec::with('joc','usuari', 'joc.bgg' )->get();
         
-        Log::info($prestecs);
+        Log::debug($prestecs);
 
         $items = $this->getListadoPrestecs();
         $response = ['prestecs' => $items];
@@ -50,7 +51,7 @@ class PrestecController extends Controller
         $prestec->save();
 
         Log::info('Insertando nuevo prestamo');
-
+        
 
         $items = $this->getListadoPrestecs();
         $response = ['prestecs' => $items];

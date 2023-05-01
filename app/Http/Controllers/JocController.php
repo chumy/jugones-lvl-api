@@ -16,7 +16,12 @@ class JocController extends Controller
         $client = new \Nataniel\BoardGameGeek\Client();
             
     
-        $thing = $client->getThing($jocId , true);
+        $thing = $client->getThing($jocId , true, true);
+
+        //Log::info(json_encode($thing));
+        //Log::info(print_r($thing->getVideos(), true));
+
+        //Log::info(print_r($thing, true));
 
 
         $joctmp = new Joc ([
@@ -28,11 +33,33 @@ class JocController extends Controller
             'edat' => $thing->getMinAge(),
             'expansio' => $thing->isBoardgameExpansion(),
             'imatge' => $thing->getThumbnail(),
-            'name' => $thing->getName()
+            'name' => $thing->getName(),
+            'videos' => $thing->getVideos(),
         ]);
           
         $response = ['jocs' => $joctmp];
          
         return response()->json($joctmp);
+    }
+
+    public function getVideos(string $jocId)
+    {
+
+        $client = new \Nataniel\BoardGameGeek\Client();
+            
+    
+        $thing = $client->getThing($jocId , false, true);
+
+        //Log::info(json_encode($thing));
+        //Log::info(print_r($thing->getVideos(), true));
+
+        //Log::info(print_r($thing, true));
+
+
+        $joctmp =  $thing->getVideos();
+          
+        $response = ['videos' => $joctmp, 'message' => 200];
+         
+        return response()->json($response);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DataPartida;
 use App\Models\DataParticipant;
+use App\Models\Partida;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +35,7 @@ class DataParticipantController extends Controller
     public function store(Request $request)
     {
         //
+        Log::info('Agregando participante');
         $participant = DataParticipant::create([
             'dataId' => $request['data'],        
             'uid' => $request['usuari']['uid'],
@@ -41,9 +43,16 @@ class DataParticipantController extends Controller
             $participant->save();
     
             
-            $items = DataPartida::where('partidaId', $request['partida']['partidaId'])->with('participants')->get();
+            $items = DataPartida::where('partidaId', $request['partida']['partidaId'])->with('participants', 'participants.participant' )->get();
+            //$items = Partida::where('partidaId', $partidaId)->with('joc','organitzador', 'participants', 'participants.participant' )->get();
+
+            //Log::info(print_r($items,true));
+        
+            $status = 200;
+            
+            $response = ['partides' => $items, 'status' => $status];
     
-            $response = ['partides' => $items];
+            //$response = ['partides' => $items];
             
             return response()->json($response);   
     }

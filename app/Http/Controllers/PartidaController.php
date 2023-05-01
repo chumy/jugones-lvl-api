@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Partida;
 use App\Models\Participant;
 use App\Models\Joc;
+use App\Models\DataPartida;
+use App\Models\DataParticipant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +24,14 @@ class PartidaController extends Controller
        
         $partidas = $this->getListadoPartidas();
 
-        $response = ['partides' => $partidas];
+        if(count($partidas) > 0){
+        
+            $status = 200;
+        }else{
+            $status = 204;
+        }
+
+        $response = ['partides' => $partidas, 'status' => $status];
         
         return response()->json($response);   
     }
@@ -53,7 +62,7 @@ class PartidaController extends Controller
                 'edat' => $request['joc']['edat'],
                 'expansio' => $request['joc']['expansio'],
                 'imatge' => $request['joc']['imatge'],
-                'name' => $request['joc']['joc'],
+                'name' => $request['joc']['name'],
             ]);
             $joc->save();
 
@@ -84,9 +93,15 @@ class PartidaController extends Controller
         $participant->save();
     
         $partidas = $this->getListadoPartidas();
-        
-        $response = ['partides' => $partidas];
-        
+
+        if(count($partidas) > 0){
+            $status = 201;
+        }else{
+            $status = 204;
+        }
+
+        $response = ['partides' => $partidas, 'status' => $status];
+                
         return response()->json($response);   
     }
 
@@ -97,9 +112,13 @@ class PartidaController extends Controller
     {
         //
         Log::info("buscando partida ".$partidaId);
-        $partida = Partida::where('partidaId', $partidaId)->with('joc','organitzador', 'participants' )->get();
+        $partida = Partida::where('partidaId', $partidaId)->with('joc','organitzador', 'participants', 'participants.participant' )->get();
+
         
-        $response = ['partides' => $partida];
+            $status = 200;
+        
+        
+        $response = ['partides' => $partida, 'status' => $status];
         
         return response()->json($response);   
     }
@@ -132,8 +151,14 @@ class PartidaController extends Controller
         
         
         $partidas = $this->getListadoPartidas();
+
+        if(count($partidas) > 0){
+            $status = 211;
+        }else{
+            $status = 204;
+        }
         
-        $response = ['partides' => $partidas];
+        $response = ['partides' => $partidas, 'status' => $status];
         
         return response()->json($response);   
     }
@@ -144,12 +169,33 @@ class PartidaController extends Controller
     public function destroy(string $partidaId)
     {
         //
+        $data=DataPartida::where('partidaId',$partidaId)->first();
+        Log::debug("data ".$data['dataId']);
+
+        $res=DataParticipant::where('dataId',$data['dataId'])->delete();
+        
         $res=Participant::where('partidaId',$partidaId)->delete();
+        
+
+        $res=DataPartida::find($data['dataId'])->delete();
+        
+
         $res=Partida::find($partidaId)->delete();
+        Log::info("Borrado de partida ->".$partidaId);
+
+        
+
+        
 
         $partidas = $this->getListadoPartidas();
         
-        $response = ['partides' => $partidas];
+        if(count($partidas) > 0){
+            $status = 210;
+        }else{
+            $status = 204;
+        }
+        
+        $response = ['partides' => $partidas, 'status' => $status];
         
         return response()->json($response);   
     }

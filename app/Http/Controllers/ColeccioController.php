@@ -18,20 +18,6 @@ class ColeccioController extends Controller
     {
         
 
-            /* SELECT C.jocId, C.joc, C.ambit, C.tipologia, JB.expansio, JB.imatge
-            , IF(PD.jocId is null, 1, 0) disponible 
-            from Coleccio C 
-            left outer join (select jocId from Prestecs P where P.dataFi is null) PD on PD.jocId = C.jocId 
-            left outer join Jocs JB on JB.bggId = C.bggId 
-            order by C.joc asc; */
-            $query = 'SELECT C.jocId, C.joc, C.ambit, C.tipologia, JB.expansio, JB.imatge '
-            ." , IF(PD.jocId is null, 1, 0) disponible "
-            ." from Coleccio C "
-            ." left outer join (select jocId from Prestecs P where P.dataFi is null) PD on PD.jocId = C.jocId "
-            ." left outer join Jocs JB on JB.bggId = C.bggId "
-            ." order by C.joc asc";        
-            $jocs = DB::select( $query );
-
             $prestado = DB::table('Prestecs')
                     ->selectRaw("sum(IF(dataFi is null, 1, 0)) as prestado, jocId as pId")
                     ->groupBy('jocId');
@@ -48,7 +34,13 @@ class ColeccioController extends Controller
 
             $jocs = $this->getColeccio();
 
-            $response = ['jocs' => $jocs, 'status'=>200];
+            if(count($jocs) > 0){
+                $status = 200;
+            }else{
+                $status = 204;
+            }
+            
+            $response = ['jocs' => $jocs, 'status' => $status];
                     
             return response()->json($response);
         
@@ -102,17 +94,17 @@ class ColeccioController extends Controller
 
 
 
-          $query = 'SELECT C.jocId, C.joc, C.ambit, C.tipologia, JB.expansio, JB.imatge '
-            ." , IF(PD.jocId is null, 1, 0) disponible "
-            ." from Coleccio C "
-            ." left outer join (select jocId from Prestecs P where P.dataFi is null) PD on PD.jocId = C.jocId "
-            ." left outer join Jocs JB on JB.bggId = C.bggId "
-            ." order by C.joc asc";        
-            $jocs = DB::select( $query );
+        $jocs = $this->getColeccio();
 
-            $response = ['jocs' => $jocs, 'status'=>201];
-                    
-            return response()->json($response);
+        if(count($jocs) > 0){
+            $status = 201;
+        }else{
+            $status = 204;
+        }
+        
+        $response = ['jocs' => $jocs, 'status' => $status];
+
+        return response()->json($response);
 
        
     }
@@ -123,14 +115,7 @@ class ColeccioController extends Controller
     public function show(string $jocId)
     {
         
-        $query = "SELECT C.jocId, C.joc, C.bggId, C.comentaris, C.ambit, C.tipologia, "
-        ."JB.expansio, JB.minJugadors, JB.maxJugadors, JB.dificultat, JB.duracio, JB.edat, JB.imatge, "
-        ."IF(PD.jocId is null, 1, 0) disponible " 
-        ."from Coleccio C " 
-        ."left outer join (select  jocId from Prestecs P where P.dataFi is null) PD on PD.jocId = C.jocId "
-        ."left outer join Jocs JB on JB.bggId = C.bggId "
-        ." WHERE C.jocId =  '".$jocId."'" ;    
-        $jocs = DB::select( $query );
+        
 
         $prestado = DB::table('Prestecs')
                     ->selectRaw("sum(IF(dataFi is null, 1, 0)) as prestado, jocId as pId")
@@ -147,11 +132,13 @@ class ColeccioController extends Controller
 
             ->get();
 
+       
+            $status = 200;
+       
 
-
-        $response = ['jocs' => $jocs, 'status'=>200];
+        $response = ['joc' => $jocs, 'status' => $status];
          
-        return response()->json($jocs);
+        return response()->json($response);
     }
 
     /**
@@ -165,9 +152,34 @@ class ColeccioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Coleccio $coleccio)
+    public function update(Request $request)
     {
         //
+        Log::info( $request['jocId']);
+
+        $coleccio = Coleccio::where('jocId',$request['jocId'])
+            ->update ([
+            'joc' => $request['joc'],
+            'tipologia' => $request['tipologia'],
+            'ambit' => $request['ambit'],
+            'comentaris' => $request['comentaris'],
+            'bggId' => $request['bggId'],          
+        ]);
+
+        Log::info('Actualizando juego ->'.$request['joc']);
+
+        
+        $jocs = $this->getColeccio();
+
+       
+        $status = 211;
+      
+          
+        
+        $response = ['jocs' => $jocs, 'status' => $status];
+
+        return response()->json($response);
+
     }
 
     /**
@@ -178,17 +190,17 @@ class ColeccioController extends Controller
         //
         $res=Coleccio::find($jocId)->delete();
 
-        $query = 'SELECT C.jocId, C.joc, C.ambit, C.tipologia, JB.expansio, JB.imatge '
-            ." , IF(PD.jocId is null, 1, 0) disponible "
-            ." from Coleccio C "
-            ." left outer join (select jocId from Prestecs P where P.dataFi is null) PD on PD.jocId = C.jocId "
-            ." left outer join Jocs JB on JB.bggId = C.bggId "
-            ." order by C.joc asc";        
-            $jocs = DB::select( $query );
+        $jocs = $this->getColeccio();
 
-            $response = ['jocs' => $jocs];
-                    
-            return response()->json($response);
+        if(count($jocs) > 0){
+            $status = 210;
+        }else{
+            $status = 204;
+        }
+        
+        $response = ['jocs' => $jocs, 'status' => $status];
+                
+        return response()->json($response);
 
     }
 
@@ -248,7 +260,7 @@ class ColeccioController extends Controller
             $status = 204;
         }
 
-        $response = ['jocs' => $items, 'status'=>$status];
+        $response = ['jocs' => $items, 'status' => $status];
 
        return response()->json($items);
 
