@@ -138,7 +138,7 @@ class PartidaController extends Controller
     public function update(Request $request)
     {
         //
-
+        Log::info("Actualizando Partida ".$request['partidaId']);
         $partida = Partida::find($request['partidaId']);
  
         $partida->bggId = $request['joc']['bggId'];
@@ -148,17 +148,14 @@ class PartidaController extends Controller
         $partida->comentaris = $request['comentaris'];
 
         $partida->save();
+                
+        //$partidas = $this->getListadoPartidas();
         
-        
-        $partidas = $this->getListadoPartidas();
+        $status = 211;
+                
+        $partida = Partida::where('partidaId', $request['partidaId'])->with('joc','organitzador', 'participants', 'participants.participant' )->get();
 
-        if(count($partidas) > 0){
-            $status = 211;
-        }else{
-            $status = 204;
-        }
-        
-        $response = ['partides' => $partidas, 'status' => $status];
+        $response = ['partides' => $partida, 'status' => $status];
         
         return response()->json($response);   
     }
