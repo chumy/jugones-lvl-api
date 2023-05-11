@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->primary(['partidaId', 'soci']);
-            $table->foreign('partidaId')->references('partidaId')->on('Partides');
+            $table->foreign('partidaId')->references('partidaId')->on('Partides')->onDelete('cascade');
             $table->foreign('soci')->references('uid')->on('Usuaris');
         
 

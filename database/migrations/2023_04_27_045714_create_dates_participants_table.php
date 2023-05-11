@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->primary(['dataId', 'uid']);
-            $table->foreign('dataId')->references('dataId')->on('DatesPartides');
+            $table->foreign('dataId')->references('dataId')->on('DatesPartides')->onDelete('cascade');
             $table->foreign('uid')->references('uid')->on('Usuaris');
         });
     }

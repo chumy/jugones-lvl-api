@@ -17,7 +17,7 @@ return new class extends Migration
             $table->datetime('data');
             $table->timestamps();
 
-            $table->foreign('partidaId')->references('partidaId')->on('Partides');
+            $table->foreign('partidaId')->references('partidaId')->on('Partides')->onDelete('cascade');
         });
     }
 

@@ -222,18 +222,27 @@ class ColeccioController extends Controller
         $parseEncode = json_encode($xmlObject);
         $responseBgg = json_decode($parseEncode,true);
 
+
     
         if ($responseBgg["@attributes"]["total"] > 0 ) {
 
             $ids=[];
-
-            foreach ($responseBgg["item"] as $item){ 
-   
-               array_push($ids,$item["@attributes"]["id"] );
-            }
-            $listIds = implode(",",array_slice($ids,0,100));
-
             $items = [];
+
+            if ($responseBgg["@attributes"]["total"] == 1 ) {
+                $responseBgg["item"]["@attributes"]["id"];
+                array_push($ids,$responseBgg["item"]["@attributes"]["id"]);
+            }
+            else {
+
+            
+                foreach ($responseBgg["item"] as $item){ 
+    
+                array_push($ids,$item["@attributes"]["id"] );
+                }
+                $listIds = implode(",",array_slice($ids,0,100));
+
+            }
 
             $things = $client->getThings(array_slice($ids,0,100) , true);
      
@@ -255,7 +264,8 @@ class ColeccioController extends Controller
                 array_push($items, $joctmp);
             }
             $status = 200;
-        }else{
+        } 
+        else{
             $items = null;
             $status = 204;
         }

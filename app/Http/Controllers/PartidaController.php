@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Partida;
 use App\Models\Participant;
 use App\Models\Joc;
+use Carbon\Carbon;
 use App\Models\DataPartida;
 use App\Models\DataParticipant;
 use Illuminate\Http\Request;
@@ -73,7 +74,7 @@ class PartidaController extends Controller
             'partidaId' => $request['partidaId'],
             'organitzador' => $request['organitzador']['uid'],
             'bggId' => $request['joc']['bggId'],
-            'data' => $request['data'],  
+            'data' => ($request['data']) ? Carbon::parse($request['data']): null,  
             'numJugadors' => $request['numJugadors'],
             'oberta' => $request['oberta'],
             'comentaris' => $request['comentaris'],
@@ -166,16 +167,17 @@ class PartidaController extends Controller
     public function destroy(string $partidaId)
     {
         //
-        $data=DataPartida::where('partidaId',$partidaId)->first();
-        Log::debug("data ".$data['dataId']);
 
+       // Log::info("PArtida ". $partidaId);
+
+       /* $data=DataPartida::where('partidaId',$partidaId)->get();
+       
         $res=DataParticipant::where('dataId',$data['dataId'])->delete();
         
         $res=Participant::where('partidaId',$partidaId)->delete();
         
-
         $res=DataPartida::find($data['dataId'])->delete();
-        
+        */
 
         $res=Partida::find($partidaId)->delete();
         Log::info("Borrado de partida ->".$partidaId);
