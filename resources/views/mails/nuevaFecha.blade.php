@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
     <meta name="x-apple-disable-message-reformatting">  <!-- Disable auto-scale in iOS 10 Mail entirely -->
-    <title>Partida $partida->joc['name']}}</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title>Partida {{$partida->joc['name']}}</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
 
 
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i" rel="stylesheet">
@@ -239,9 +239,13 @@ table{
 	letter-spacing: 2px;
 	color: rgba(255,255,255,.4);
     border-bottom: 3px #f3a333 solid;
-   
+    
 }
 
+.underline {
+    border-bottom: 3px #f3a333 solid;
+    display:block;
+}
 
 
 /*SERVICES*/
@@ -346,7 +350,7 @@ table{
          
 	      </tr><!-- end tr -->
 				<tr>
-          <td valign="middle" class="hero" style="background-image: url('$partida->joc['imatge']}}'); background-size: cover; height: 400px;">
+          <td valign="middle" class="hero" style="background-image: url('{{$partida->joc['imatge']}}'); background-size: cover; height: 400px;">
             
           </td>
 	      </tr><!-- end tr -->
@@ -356,8 +360,8 @@ table{
 		          <tr>
 		            <td class="bg_dark email-section" style="text-align:center;">
 		            	<div class="heading-section heading-section-white">
-		            		<span class="subheading">$partida->joc['name']}}</span>
-		              	<h2>Partida Actualitzada</h2>
+		            		<span class="subheading">{{$partida->joc['name']}}</span>
+		              	<h2>Nova Data Proposta</h2>
 		              	<!--p>La partida a Polis ha sido actualizada. </p-->
 		            	</div>
 		            </td>
@@ -370,111 +374,20 @@ table{
 		            	<div class="heading-section" style="text-align: center; padding: 0 30px;">
 		            		
                             <!--span class="subheading"><h2>Información</h2></span-->
-		              	<p>La partida a $partida->joc['name']}} ha estat actualitzada. A continuació es mostra la informació de la partida </p>
+		              	<p>{{$participant->displayName}} ha propossat la següent data <b>{{$data}}</b> per a la partida {{$partida->joc['name']}}. </p>
 		            	</div>
                     </td>
                     </tr>
+                   
                     <tr>
-		            <td class="bg_light email-section">
-		            	<div class="heading-section" style="text-align: center; padding: 0 0px;">
-		            		<span class="subheading">Detalls</span>
-		            	</div>
-                    </td>
-		          </tr><!-- end: tr -->
-                  
-                    <tr>
-                    <td>
-		            <table role="presentation" border="0" cellpadding="10" cellspacing="0" width="100%" >
-                       
-
-                      <td valign="top" width="33%" style="padding-top: 20px;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                          
-                          <tr>
-                            <td class="text-testimony" style="text-align: center;">
-                            	<h3 class="name">Data Proposta</h3>
-                            	<span class="position">$partida->data}}</span>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td valign="top" width="33%" style="padding-top: 20px;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                          
-                          <tr>
-                            <td class="text-testimony" style="text-align: center;">
-                            	<h3 class="name">Num Jugadors</h3>
-                            	<span class="position">$partida->numJugadors}}</span>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td valign="top" width="33%" style="padding-top: 20px;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                          
-                          <tr>
-                            <td class="text-testimony" style="text-align: center;">
-                            	<h3 class="name">Organitzador</h3>
-                            	<span class="position">$partida->organitzador}}</span>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                      
-                    </tr>
-                    <tr>
-                    <td valign="top" style="padding-top: 20px;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                          
-                          <tr>
-                            <td class="text-testimony" style="text-align: center;">
-                            	<h3 class="name">Comentaris</h3>
-                            	<span class="position">$partida->comentaris}}</span>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                      
-                    </tr>
-		            	</table>
-		            </td>
-		          </tr><!-- end: tr -->
-                  <tr>
-		            <td class="bg_light email-section">
-		            	<div class="heading-section" style="text-align: center; padding: 0 10px;">
-		            		<span class="subheading">Participants</span>
-		            	</div>
-                    </td>
-                <tr>
-                    <td>
-                        <table role="presentation" border="0" cellpadding="10" cellspacing="0" width="100%" >
-                        
-
-                            <td valign="top" width="100%" style="padding-top: 20px;">
-                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                                
-                                <tr>
-                                    <td class="text-testimony" style="text-align: center;">
-                                        <h4 class="name">P1</h4>
-                                        <h4 class="name">P2</h4>
-                                    </td>
-                                </tr>
-                                </table>
-                            </td>
-                        </table>
-                    </td>
-                    
-		          </tr><!-- end: tr -->
-                  <tr>
-		            <td class="email-section" style="text-align: center;">
-                            <p><a href="https://jugonesmdr.web.app/tabs/partides/detall/$partida->partidaId}}" class="btn btn-primary">Enllaç a la partida</a></p>
-		            	</div>
+		                <td class="email-section" style="text-align: center;">
+                            <p><a href="https://jugonesmdr.web.app/tabs/partides/detall/{{$partida->partidaId}}" class="btn btn-primary">Enllaç a la partida</a></p>
+                        </td>
                     </tr><!-- end: tr -->  
 		        </table>
 
 		      </td>
 		    </tr><!-- end:tr -->
-      <!-- 1 Column Text + Button : END -->
       </table>
       <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 20px;">
       	<tr>
@@ -499,7 +412,7 @@ table{
           </td>
         </tr><!-- end: tr -->
         <tr>
-        	<td valign="middle" class="bg_black footer email-section">
+        	<td valign="middle" class="bg_black footer email-section" >
         		<table>
             	<tr>
                 <td valign="top">

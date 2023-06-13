@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PartidaParticipante;
 
 
 class ParticipantController extends Controller
@@ -50,6 +52,18 @@ class ParticipantController extends Controller
             $status = 201;
         }else{
             $status = 204;
+        }
+
+        //Log::info(print_r($partida[0],true));
+         //Enviar email a los usuarios
+         if ($partida[0]->participants){
+            $emails = [];
+            foreach ($partida[0]->participants as $p){
+                $usuari = $p->participant()->first();
+                array_push($emails, $usuari['email']);
+            }
+            //Log::info(print_r($emails,true));
+            Mail::to($emails)->send(new PartidaParticipante($request['partida']['partidaId'], $request['participant']['uid']));
         }
         
         $response = ['partides' => $partida, 'status' => $status];

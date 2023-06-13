@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\DataPartida;
+use App\Models\Partida;
 use App\Models\DataParticipant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PartidaFechaNueva;
 
 class DataPartidaController extends Controller
 {
@@ -63,7 +66,7 @@ class DataPartidaController extends Controller
 
         
         $items = DataPartida::where('partidaId', $request['partida']['partidaId'])->with('participants')->get();
-        $items = Partida::where('partidaId',  $request['partida']['partidaId'])->with('joc','organitzador', 'participants', 'participants.participant' )->get();
+        //$partida = Partida::where('partidaId',  $request['partida']['partidaId'])->get();
 
         
             //$status = 200;
@@ -79,7 +82,20 @@ class DataPartidaController extends Controller
         
         $response = ['partides' => $items, 'status' => $status];
 
-        
+        //Enviar email a los usuarios
+        $partida = Partida::where('partidaId', $request['partida']['partidaId'])->get()[0];
+         //Log::info(print_r($partida[0],true));
+         //Enviar email a los usuarios
+         if ($partida->participants){
+            $emails = [];
+            foreach ($partida->participants as $p){
+                $usuari = $p->participant()->first();
+                array_push($emails, $usuari['email']);
+            }
+            //Log::info(print_r($emails,true));
+            Mail::to($emails)->send(new PartidaFechaNueva($request['partida']['partidaId'], $request['usuari']['uid'], $request['data']));
+        }
+
         return response()->json($response);   
 
     }

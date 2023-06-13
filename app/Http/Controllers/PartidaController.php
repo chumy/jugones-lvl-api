@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PartidaUpdated;
 
 class PartidaController extends Controller
 {
@@ -51,6 +53,7 @@ class PartidaController extends Controller
     public function store(Request $request)
     {
         //
+        Log::info("Creando partida ");
 
         if (!Joc::where('bggId',  $request['joc']['bggId'],)->exists()) {    
             
@@ -154,9 +157,18 @@ class PartidaController extends Controller
         
         $status = 211;
                 
-        $partida = Partida::where('partidaId', $request['partidaId'])->with('joc','organitzador', 'participants', 'participants.participant' )->get();
+        $partida = Partida::where('partidaId', $request['partidaId'])->with('joc','organitzador', 'participants', 'participants.participant' )->first();
 
         $response = ['partides' => $partida, 'status' => $status];
+
+        //Enviar email a los usuarios
+        $emails = [];
+        foreach ($partida->participants as $p){
+            $usuari = $p->participant()->first();
+            array_push($emails, $usuari['email']);
+        }
+        //Log::info(print_r($emails,true));
+        Mail::to($emails)->send(new PartidaUpdated($request['partidaId']));
         
         return response()->json($response);   
     }
