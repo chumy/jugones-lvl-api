@@ -104,6 +104,7 @@ class UserController extends Controller
         $usuari->displayName = $request['displayName'];
         $usuari->email = $request['email'];
         $usuari->rol = $request['rol'];
+        $usuari->avisos = $request['avisos'];
         $usuari->parella = $request['parella'];
         $usuari->save();
         

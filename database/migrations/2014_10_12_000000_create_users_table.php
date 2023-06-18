@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('rol')->default(0);
             $table->string('photoURL')->nullable();
             $table->string('parella')->nullable();
+            $table->boolean('avisos')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });

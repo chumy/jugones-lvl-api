@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Partida;
 use App\Models\Participant;
 use App\Models\Joc;
+use App\Models\User;
 use Carbon\Carbon;
 use App\Models\DataPartida;
 use App\Models\DataParticipant;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PartidaUpdated;
+use App\Mail\PartidaNueva;
 
 class PartidaController extends Controller
 {
@@ -103,6 +105,17 @@ class PartidaController extends Controller
         }else{
             $status = 204;
         }
+
+
+        //Enviar email a los usuarios
+        $usuaris = User::where('avisos',1)->get();
+         $emails = [];
+         foreach ($usuaris as $usuari){
+             //$usuari = $p;
+             array_push($emails, $usuari['email']);
+         }
+        //Log::info($emails);
+        Mail::to($emails)->send(new PartidaNueva($request['partidaId']));
 
         $response = ['partides' => $partidas, 'status' => $status];
                 
