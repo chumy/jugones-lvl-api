@@ -278,15 +278,15 @@ class ColeccioController extends Controller
 
     private function getColeccio(){
 
-        $query = 'SELECT C.jocId, C.joc, C.ambit, C.tipologia, JB.expansio, JB.imatge '
+        /*$query = 'SELECT C.jocId, C.joc, C.ambit, C.tipologia, JB.expansio, JB.imatge '
         ." , IF(PD.jocId is null, 1, 0) disponible "
         ." from Coleccio C "
         ." left outer join (select jocId from Prestecs P where P.dataFi is null) PD on PD.jocId = C.jocId "
         ." left outer join Jocs JB on JB.bggId = C.bggId "
         ." order by C.joc asc";        
-        $jocs = DB::select( $query );
+        $jocs = DB::select( $query );*/
 
-        return $coleccio = Coleccio::select('jocId','joc','ambit','tipologia','bggId')
+        $coleccio = Coleccio::select('jocId','joc','ambit','tipologia','bggId')
         ->with(
             ['bgg' => function ($query) {
             $query->select('bggId','expansio', 'imatge');
@@ -297,6 +297,27 @@ class ColeccioController extends Controller
             }],
             )
         ->orderBy('joc','asc')->get();
+
+        $items = [];
+        foreach ($coleccio as $joc){ 
+
+            log::info($joc);
+      
+            $item = [
+                'jocId' => $joc['jocId'],
+                'ambit' => $joc['ambit'],
+                'tipologia' => $joc['tipologia'],
+                'bggId' => $joc['bgg']['bggId'],          
+                'expansio' => $joc['bgg']['expansio'],
+                'imatge' => $joc['bgg']['imatge'],
+                'joc' => $joc['joc'],
+                'prestec' => $joc['prestec'],
+                ];
+      
+            array_push($items, $item);
+        }
+
+        return $items;
 
 
 /*
