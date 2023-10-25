@@ -301,15 +301,15 @@ class ColeccioController extends Controller
         $items = [];
         foreach ($coleccio as $joc){ 
 
-            log::info($joc);
+            //log::info($joc);
       
             $item = [
                 'jocId' => $joc['jocId'],
                 'ambit' => $joc['ambit'],
                 'tipologia' => $joc['tipologia'],
-                'bggId' => $joc['bgg']['bggId'],          
-                'expansio' => $joc['bgg']['expansio'],
-                'imatge' => $joc['bgg']['imatge'],
+                'bggId' => ($joc['bgg']) ? $joc['bgg']['bggId'] : null,          
+                'expansio' => ($joc['bgg']) ? $joc['bgg']['expansio']: null,
+                'imatge' => ($joc['bgg']) ? $joc['bgg']['imatge']: null,
                 'joc' => $joc['joc'],
                 'prestec' => $joc['prestec'],
                 ];
