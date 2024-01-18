@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\PartidaUpdated;
 use App\Mail\PartidaNueva;
 
+
+
 class PartidaController extends Controller
 {
     //
@@ -128,13 +130,18 @@ class PartidaController extends Controller
     public function show(string $partidaId)
     {
         //
-        Log::info("buscando partida ".$partidaId);
-        $partida = Partida::where('partidaId', $partidaId)->with('joc','organitzador', 'participants', 'participants.participant' )->get();
+     
 
-        
-            $status = 200;
-        
-        
+        Log::info("buscando partida ".$partidaId);
+        //DB::enableQueryLog();
+        $partida = Partida::where('partidaId', $partidaId)->with('joc','organitzador', 'participants', 'participants.participant' )->get();
+        //error_log("Hola ".$partida);
+        //$partidaT = Partida::where('partidaId', $partidaId)->with('joc','organitzador', 'participants', 'participants.participant')->getBindings();
+        $status = 200;
+        //print_r($partidaT );
+        //Log::info("SQL ");
+        //error_log(DB::getQueryLog());
+       
         $response = ['partides' => $partida, 'status' => $status];
         
         return response()->json($response);   
@@ -162,6 +169,7 @@ class PartidaController extends Controller
         $partida->organitzador = $request['organitzador']['uid'];
         $partida->data = $request['data'];
         $partida->oberta = $request['oberta'];
+        $partida->numJugadors = $request['numJugadors'];
         $partida->comentaris = $request['comentaris'];
 
         $partida->save();
@@ -226,6 +234,8 @@ class PartidaController extends Controller
 
     private function getListadoPartidas(){
 
+
+    
         return $partidas = Partida::
         with('joc','organitzador', 'participants' )
         ->where(function ($query) {
