@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Joc;
+use App\Models\Prestec;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -61,5 +62,20 @@ class JocController extends Controller
         $response = ['videos' => $joctmp, 'message' => 200];
          
         return response()->json($response);
+    }
+
+    public function getPrestec(string $jocId)
+    {
+
+        //$prestec = Prestec::where('jocId',$jocId)->where('dataFi', null)->get();
+        $prestec = Prestec::where('jocId',$jocId)->get();
+
+        //Log::info(print_r($jocId));
+        //Log::info(print_r($thing->getVideos(), true));
+
+        //Log::info(print_r($prestec));
+
+        
+        return response()->json($prestec);
     }
 }

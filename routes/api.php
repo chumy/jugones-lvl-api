@@ -45,10 +45,11 @@ Route::get('/jocs/{jocId}', 'App\Http\Controllers\ColeccioController@show');
 Route::middleware('auth:sanctum')->delete('/jocs/{jocId}', 'App\Http\Controllers\ColeccioController@destroy');
 Route::middleware('auth:sanctum')->patch('/jocs', 'App\Http\Controllers\ColeccioController@update');
 
+
 /** Jocs */
 Route::get('/jocs/bgg/{jocId}', 'App\Http\Controllers\JocController@show');
 Route::get('/jocs/bggVideos/{jocId}', 'App\Http\Controllers\JocController@getVideos');
-
+Route::get('/jocs/prestecs/{jocId}', 'App\Http\Controllers\JocController@getPrestec');
 
 
 /*** PRESTECS */
