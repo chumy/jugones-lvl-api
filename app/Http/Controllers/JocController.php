@@ -35,7 +35,7 @@ class JocController extends Controller
             'expansio' => $thing->isBoardgameExpansion(),
             'imatge' => $thing->getThumbnail(),
             'name' => $thing->getName(),
-            'videos' => $thing->getVideos(),
+            'videos' => $this->getVideos($thing->getId()),
         ]);
           
         $response = ['jocs' => $joctmp];
@@ -78,4 +78,7 @@ class JocController extends Controller
         
         return response()->json($prestec);
     }
+
+
+    
 }

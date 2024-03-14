@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
     
-        $usuaris = User::all();
+        $usuaris = User::where('rol', '>', -1)->get();
         
         Log::info($usuaris);
 
@@ -60,7 +60,7 @@ class UserController extends Controller
         Log::info('Insertando nuevo usuario');
 
 
-        $usuaris = User::all();
+        $usuaris = User::where('rol', '>', -1)->get();
 
         if(count($usuaris) > 0){
             $status = 201;
@@ -124,7 +124,7 @@ class UserController extends Controller
         //
         $res=User::find($uid)->delete();
 
-        $usuaris = User::all();
+        $usuaris = User::where('rol', '>', -1)->get();
 
         if(count($usuaris) > 0){
             $status = 210;

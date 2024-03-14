@@ -44,12 +44,15 @@ Route::get('/jocs/bggsearchbyname/{query}','App\Http\Controllers\ColeccioControl
 Route::get('/jocs/{jocId}', 'App\Http\Controllers\ColeccioController@show');
 Route::middleware('auth:sanctum')->delete('/jocs/{jocId}', 'App\Http\Controllers\ColeccioController@destroy');
 Route::middleware('auth:sanctum')->patch('/jocs', 'App\Http\Controllers\ColeccioController@update');
+Route::middleware('auth:sanctum')->post('/jocs/historic/{jocId}','App\Http\Controllers\ColeccioController@storeHistorico');
+//Route::get('/jocs/historico/{jocId}','App\Http\Controllers\ColeccioController@storeHistorico');
 
 
 /** Jocs */
 Route::get('/jocs/bgg/{jocId}', 'App\Http\Controllers\JocController@show');
 Route::get('/jocs/bggVideos/{jocId}', 'App\Http\Controllers\JocController@getVideos');
 Route::get('/jocs/prestecs/{jocId}', 'App\Http\Controllers\JocController@getPrestec');
+
 
 
 /*** PRESTECS */
@@ -80,3 +83,9 @@ Route::middleware('auth:sanctum')->post('/partides/delDate', 'App\Http\Controlle
 /*** DATES Participants */
 Route::middleware('auth:sanctum')->post('/partides/addDateParticipant', 'App\Http\Controllers\DataParticipantController@store');
 Route::middleware('auth:sanctum')->post('/partides/delDateParticipant', 'App\Http\Controllers\DataParticipantController@destroy');
+
+/** Reserves */
+Route::get('/reserves','App\Http\Controllers\ReservaController@index');
+//Route::get('/reserves/set','App\Http\Controllers\ReservaController@setEvent');
+Route::middleware('auth:sanctum')->post('/reserves', 'App\Http\Controllers\ReservaController@store');
+Route::middleware('auth:sanctum')->delete('/reserves/{reservaId}', 'App\Http\Controllers\ReservaController@destroy');

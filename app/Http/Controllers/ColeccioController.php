@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coleccio;
 use App\Models\Joc;
+use App\Models\Prestec;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,7 @@ class ColeccioController extends Controller
         
 
             $prestado = DB::table('Prestecs')
-                    ->selectRaw("sum(IF(dataFi is null, 1, 0)) as prestado, jocId as pId")
+                    ->selectRaw("sum(IF(dataFi is null, 1, 0)) as prestec, jocId as pId")
                     ->groupBy('jocId');
 
 
@@ -188,6 +189,9 @@ class ColeccioController extends Controller
     public function destroy(string $jocId)
     {
         //
+        
+        Log::info('Eliminando juego'. $jocId);
+
         $res=Coleccio::find($jocId)->delete();
 
         $jocs = $this->getColeccio();
@@ -338,4 +342,43 @@ class ColeccioController extends Controller
                     })
         ->get();*/
     }
+
+    public function storeHistorico(string $jocId)
+    {
+        Log::info($jocId);
+        $usuariPrestamo='HP-000000000923';
+        $fechaIni='2023-01-01';
+        $fechaFin='2023-01-02';
+        
+        $prestec = Prestec::create ([
+            'jocId' => $jocId,
+            'uid' => $usuariPrestamo,
+            'dataInici' => $fechaIni,
+            'dataFi' => $fechaFin,         
+        ]);
+        $prestec->save();
+
+        Log::info('Insertando nuevo préstamo historico');
+            
+        
+        $prestado = DB::table('Prestecs')
+        ->selectRaw("sum(IF(dataFi is null, 1, 0)) as prestado, jocId as pId")
+        ->groupBy('jocId');
+
+        $jocs = Coleccio::with('bgg')
+        ->leftJoinSub($prestado, 'prestec', function ($join)
+        {
+            $join->on('Coleccio.jocId', '=', 'prestec.pId');
+        })
+        ->where('jocId',$jocId)
+        ->get();
+
+        $status = 200;
+        
+        $response = ['joc' => $jocs, 'status' => $status];
+        Log::info($response);
+        return response()->json($response);
+       
+    }
+
 }
