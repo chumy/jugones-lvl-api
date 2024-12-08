@@ -169,6 +169,12 @@ class ColeccioController extends Controller
 
         Log::info('Actualizando juego ->'.$request['joc']);
 
+        //Actualizar info BGG
+        if ($request['bggId'] > 0)
+        {
+            $this->getJocBggId($request['bggId']);
+        }
+
         
         $jocs = $this->getColeccio();
 
@@ -324,23 +330,7 @@ class ColeccioController extends Controller
         return $items;
 
 
-/*
-        return $partidas = Partida::
-        with('joc','organitzador', 'participants' )
-        ->where(function ($query) {
-                    $query->where('oberta', '=', '1')
-                        ->orWhere( function($q) {
-                            $q->whereNull('data')
-                              ->where('oberta',0);
-                            })
-                        ->orWhere( 
-                                    function($q) {
-                                        $q->whereRaw('data >= ADDDATE(now(), INTERVAL -2 DAY)')
-                                          ->where('oberta',0);
-                                    }
-                        );
-                    })
-        ->get();*/
+
     }
 
     public function storeHistorico(string $jocId)
@@ -376,9 +366,47 @@ class ColeccioController extends Controller
         $status = 200;
         
         $response = ['joc' => $jocs, 'status' => $status];
-        Log::info($response);
+        //Log::info($response);
         return response()->json($response);
        
+    }
+
+    public function getJocBggId(string $bggId)
+    {
+
+        $client = new \Nataniel\BoardGameGeek\Client();
+        $thing = $client->getThing($bggId, true);
+        if (!Joc::where('bggId', $bggId)->exists()) {    
+            
+            $joc = new Joc ([
+                'bggId' => $thing->getId(),          
+                'minJugadors' => $thing->getMinPlayers(),
+                'maxJugadors' =>$thing->getMaxPlayers(),
+                'dificultat' => $thing->getWeightAverage(),
+                'duracio' => $thing->getPlayingTime(),
+                'edat' => $thing->getMinAge(),
+                'expansio' => $thing->isBoardgameExpansion(),
+                'imatge' => $thing->getThumbnail(),
+                'name' => $thing->getName()
+            ]);
+            $joc->save();
+        }
+        else{
+            Joc::where('bggId', $bggId)
+              ->update ([
+                'bggId' => $thing->getId(),          
+                'minJugadors' => $thing->getMinPlayers(),
+                'maxJugadors' =>$thing->getMaxPlayers(),
+                'dificultat' => $thing->getWeightAverage(),
+                'duracio' => $thing->getPlayingTime(),
+                'edat' => $thing->getMinAge(),
+                'expansio' => $thing->isBoardgameExpansion(),
+                'imatge' => $thing->getThumbnail(),
+                'name' => $thing->getName()
+            ]);
+        
+        }
+
     }
 
 }

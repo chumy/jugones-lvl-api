@@ -19,7 +19,7 @@ class PrestecController extends Controller
     
         $prestecs = Prestec::with('joc','usuari', 'joc.bgg' )->get();
         
-        Log::debug($prestecs);
+        //Log::debug($prestecs);
 
         $items = $this->getListadoPrestecs();
         $response = ['prestecs' => $items];
@@ -156,7 +156,7 @@ class PrestecController extends Controller
 
     protected function getListadoPrestecs(){
 
-        $prestecs = Prestec::with('joc','usuari', 'joc.bgg' )->get();
+        $prestecs = Prestec::with('joc','usuari', 'joc.bgg' )->where('dataFi',null)->get();
         $items = [];
         foreach ($prestecs as $p){ 
             $item = $this->formatPrestec($p);
