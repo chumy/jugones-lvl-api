@@ -216,24 +216,68 @@ class ColeccioController extends Controller
 
     public function searchBggByName (string $query)
     {
-        Log::info("entradon en busqueda BGG");
+        Log::info("entrado en busqueda BGG");
 
         $client = new \Nataniel\BoardGameGeek\Client();
         
  
-
-
         $url = "https://api.geekdo.com/xmlapi2/search?query=".$query."&type=boardgame";
     
-        Log::info("Buscando en BGG".$url);
+        //Log::info("Buscando en BGG ".$url);
 
         $responseXML = Http::get($url);
+        
         $xmlObject = simplexml_load_string($responseXML);
+        
         $parseEncode = json_encode($xmlObject);
         $responseBgg = json_decode($parseEncode,true);
 
+        //Log::info("BGG TOTAL ". $responseBgg["@attributes"]["total"] );
+        //Log::info("XML Totla ". $xmlObject->count());
+        $items = [];
+        if ($xmlObject->count() > 0 ) {
+            
+            $ids = [];
+            foreach ($xmlObject->item as $item) {
+                array_push($ids,$item->attributes()["id"]);
+            }
 
+            //Paquetes de 20 ids
+            Log::info("# Paquetes ".ceil(sizeof($ids)/20));
+
+           
+
+            for ($i=0;$i< ceil(sizeof($ids)/20) ; $i++)
+            {
+                
+                $things = $client->getThings(array_slice($ids,$i*20,20), true);
+
+                foreach ($things as $thing){ 
+                    Log::info("Procesando ".$thing->getId());
+                    $joctmp = new Joc ([
+                        'bggId' => $thing->getId(),          
+                        'minJugadors' => $thing->getMinPlayers(),
+                        'maxJugadors' =>$thing->getMaxPlayers(),
+                        'dificultat' => $thing->getWeightAverage(),
+                        'duracio' => $thing->getPlayingTime(),
+                        'edat' => $thing->getMinAge(),
+                        'expansio' => $thing->isBoardgameExpansion(),
+                        'imatge' => $thing->getThumbnail(),
+                        'name' => $thing->getName()
+                    ]);
+                
+                    array_push($items, $joctmp);
+                }
+
+            }
+            $status = 200;
+        } 
+        else{
+            $items = [];
+            $status = 204;
+        }
     
+       /*  
         if ($responseBgg["@attributes"]["total"] > 0 ) {
 
             $ids=[];
@@ -279,6 +323,8 @@ class ColeccioController extends Controller
             $items = null;
             $status = 204;
         }
+        */
+        Log::info("Total ". sizeof($items));
 
         $response = ['jocs' => $items, 'status' => $status];
 
