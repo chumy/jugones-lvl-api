@@ -19,7 +19,7 @@ class UserController extends Controller
     
         $usuaris = User::where('rol', '>', -1)->orderBy('displayName', 'ASC')->get();
         
-        Log::info($usuaris);
+        //Log::info($usuaris);
 
         //$items = $this->getListadoPrestecs();
         

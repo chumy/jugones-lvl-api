@@ -15,7 +15,7 @@ class PrestecController extends Controller
      */
     public function index()
     {
-        Log::info('Listado de Prestamos prestamo');
+        Log::info('Listado de Prestamos');
     
         $prestecs = Prestec::with('joc','usuari', 'joc.bgg' )->get();
         
