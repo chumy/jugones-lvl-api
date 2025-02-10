@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
     
-        $usuaris = User::where('rol', '>', -1)->get();
+        $usuaris = User::where('rol', '>', -1)->orderBy('displayName', 'ASC')->get();
         
         Log::info($usuaris);
 
