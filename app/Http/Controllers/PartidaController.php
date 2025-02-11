@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PartidaUpdated;
 use App\Mail\PartidaNueva;
+use App\Mail\PartidaNuevaInvitado;
 
 
 
@@ -27,7 +28,7 @@ class PartidaController extends Controller
      */
     public function index()
     {
-        //
+        //   
        
         $partidas = $this->getListadoPartidas();
 
@@ -59,47 +60,50 @@ class PartidaController extends Controller
         //
         Log::info("Creando partida ");
 
-        if (!Joc::where('bggId',  $request['joc']['bggId'],)->exists()) {    
+        if (!Joc::where('bggId',  $request['partida']['joc']['bggId'],)->exists()) {    
             
             $joc = Joc::create ([
-                'bggId' => $request['joc']['bggId'],        
-                'minJugadors' => $request['joc']['minJugadors'],
-                'maxJugadors' =>$request['joc']['maxJugadors'],
-                'dificultat' => $request['joc']['dificultat'],
-                'duracio' => $request['joc']['duracio'],
-                'edat' => $request['joc']['edat'],
-                'expansio' => $request['joc']['expansio'],
-                'imatge' => $request['joc']['imatge'],
-                'name' => $request['joc']['name'],
+                'bggId' => $request['partida']['joc']['bggId'],        
+                'minJugadors' => $request['partida']['joc']['minJugadors'],
+                'maxJugadors' =>$request['partida']['joc']['maxJugadors'],
+                'dificultat' => $request['partida']['joc']['dificultat'],
+                'duracio' => $request['partida']['joc']['duracio'],
+                'edat' => $request['partida']['joc']['edat'],
+                'expansio' => $request['partida']['joc']['expansio'],
+                'imatge' => $request['partida']['joc']['imatge'],
+                'name' => $request['partida']['joc']['name'],
             ]);
             $joc->save();
 
         }
-
+        
              
         $partida = Partida::create([
-            'partidaId' => $request['partidaId'],
-            'organitzador' => $request['organitzador']['uid'],
-            'bggId' => $request['joc']['bggId'],
-            'data' => ($request['data']) ? Carbon::parse($request['data']): null,  
-            'numJugadors' => $request['numJugadors'],
-            'oberta' => $request['oberta'],
-            'comentaris' => $request['comentaris'],
+            'partidaId' => $request['partida']['partidaId'],
+            'organitzador' => $request['partida']['organitzador']['uid'],
+            'bggId' => $request['partida']['joc']['bggId'],
+            'data' => ($request['partida']['data']) ? Carbon::parse($request['data']): null,  
+            'numJugadors' => $request['partida']['numJugadors'],
+            'oberta' => $request['partida']['oberta'],
+            'comentaris' => $request['partida']['comentaris'],
 
         ]);
+       
 
         $partida->save();
 
         
         $participant = Participant::create ([
-            'partidaId' => $request['partidaId'],        
-            'soci' => $request['organitzador']['uid'],
-            'explicador' =>$request['organitzador']['explicador'],
-            'propietario' => $request['organitzador']['propietari'],
-            'need_explicacion' => $request['organitzador']['need_explicacio'],
+            'partidaId' => $request['partida']['partidaId'],        
+            'soci' => $request['partida']['organitzador']['uid'],
+            'explicador' =>$request['partida']['organitzador']['explicador'],
+            'propietario' => $request['partida']['organitzador']['propietari'],
+            'need_explicacion' => $request['partida']['organitzador']['need_explicacio'],
         ]);
         $participant->save();
-    
+
+        Log::info("Listado de invitados ".sizeof($request['convidats']));
+
         $partidas = $this->getListadoPartidas();
 
         if(count($partidas) > 0){
@@ -108,16 +112,23 @@ class PartidaController extends Controller
             $status = 204;
         }
 
-
         //Enviar email a los usuarios
-        $usuaris = User::where('avisos',1)->get();
+         $usuaris = (sizeof($request['convidats']) == 0) ? User::where('avisos',1)->get() : $request['convidats'] ;
          $emails = [];
          foreach ($usuaris as $usuari){
              //$usuari = $p;
-             array_push($emails, $usuari['email']);
+             if ($usuari['avisos'] == 1){
+                array_push($emails, $usuari['email']);
+             }
          }
-        //Log::info($emails);
-        Mail::to($emails)->send(new PartidaNueva($request['partidaId']));
+
+        
+        ///Log::info($emails);  
+        if (sizeof($request['convidats']) == 0)
+            Mail::to($emails)->send(new PartidaNueva($request['partida']['partidaId']));
+        else
+            Mail::to($emails)->send(new PartidaNuevaInvitado($request['partida']['partidaId']));
+        
 
         $response = ['partides' => $partidas, 'status' => $status];
                 

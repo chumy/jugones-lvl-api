@@ -381,7 +381,7 @@ table{
                    
                     <tr>
 		                <td class="email-section" style="text-align: center;">
-                            <p><a href="https://jugonesmdr.web.app/tabs/partides/detall/{{$partida->partidaId}}" class="btn btn-primary">Enllaç a la partida</a></p>
+                            <p><a href="{{config('app.url')}}/tabs/partides/detall/{{$partida->partidaId}}" class="btn btn-primary">Enllaç a la partida</a></p>
                         </td>
                     </tr><!-- end: tr -->  
 		        </table>

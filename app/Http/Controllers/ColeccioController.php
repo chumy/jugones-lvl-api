@@ -243,7 +243,7 @@ class ColeccioController extends Controller
             }
 
             //Paquetes de 20 ids
-            Log::info("# Paquetes ".ceil(sizeof($ids)/20));
+            Log::info("# Paquetes BGG ".ceil(sizeof($ids)/20));
 
            
 
@@ -253,7 +253,7 @@ class ColeccioController extends Controller
                 $things = $client->getThings(array_slice($ids,$i*20,20), true);
 
                 foreach ($things as $thing){ 
-                    Log::info("Procesando ".$thing->getId());
+                    //Log::info("Procesando ".$thing->getId());
                     $joctmp = new Joc ([
                         'bggId' => $thing->getId(),          
                         'minJugadors' => $thing->getMinPlayers(),

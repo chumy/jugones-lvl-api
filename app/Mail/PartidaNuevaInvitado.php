@@ -13,7 +13,7 @@ use App\Models\Partida;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
-class PartidaNueva extends Mailable
+class PartidaNuevaInvitado extends Mailable
 {
     use Queueable, SerializesModels;
     public $partida;
@@ -25,7 +25,9 @@ class PartidaNueva extends Mailable
     {
         $this->partida = Partida::where('partidaId', $part)->with('joc','organitzador', 'participants', 'participants.participant')->get()[0];
         $this->organizador = User::where('uid', $this->partida->organitzador)->get()[0];
-        //Log::info(print_r($this->partida->joc['name'], true));
+        //Log::info(print_r($this->partida->joc, true));
+        Log::info("listado ");
+        Log::info("lista ".env('app.url'));
     }
 
     /**
@@ -34,7 +36,7 @@ class PartidaNueva extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Molins De Joc: Nova Partida '.$this->partida->joc['name'],
+            subject: 'Molins De Joc: Invitació a Partida '.$this->partida->joc['name'],
         );
     }
 
@@ -44,8 +46,8 @@ class PartidaNueva extends Mailable
     public function content(): Content
     {
         
-        return new Content( 
-           view: 'mails.PartidaNueva',
+        return new Content(
+            view: 'mails.PartidaNuevaInvitado',
         );
     }
 
