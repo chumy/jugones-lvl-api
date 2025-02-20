@@ -118,16 +118,17 @@ class PartidaController extends Controller
          foreach ($usuaris as $usuari){
              //$usuari = $p;
              if ($usuari['avisos'] == 1){
-                array_push($emails, $usuari['email']);
+                //array_push($emails, $usuari['email']);
+                if (sizeof($request['convidats']) == 0)
+                    Mail::to($usuari['email'])->send(new PartidaNueva($request['partida']['partidaId']));
+                else
+                    Mail::to($usuari['email'])->send(new PartidaNuevaInvitado($request['partida']['partidaId']));
              }
          }
 
         
         ///Log::info($emails);  
-        if (sizeof($request['convidats']) == 0)
-            Mail::to($emails)->send(new PartidaNueva($request['partida']['partidaId']));
-        else
-            Mail::to($emails)->send(new PartidaNuevaInvitado($request['partida']['partidaId']));
+       
         
 
         $response = ['partides' => $partidas, 'status' => $status];
