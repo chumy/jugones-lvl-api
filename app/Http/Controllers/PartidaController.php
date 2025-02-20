@@ -82,7 +82,7 @@ class PartidaController extends Controller
             'partidaId' => $request['partida']['partidaId'],
             'organitzador' => $request['partida']['organitzador']['uid'],
             'bggId' => $request['partida']['joc']['bggId'],
-            'data' => ($request['partida']['data']) ? Carbon::parse($request['data']): null,  
+            'data' => ($request['partida']['data']) ? Carbon::parse($request['partida']['data']): null,  
             'numJugadors' => $request['partida']['numJugadors'],
             'oberta' => $request['partida']['oberta'],
             'comentaris' => $request['partida']['comentaris'],
