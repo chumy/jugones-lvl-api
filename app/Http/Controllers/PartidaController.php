@@ -246,23 +246,41 @@ class PartidaController extends Controller
 
     private function getListadoPartidas(){
 
-
+        $this->setStatusPartidas();
     
         return $partidas = Partida::
         with('joc','organitzador', 'participants' )
         ->where(function ($query) {
+                    /*
                     $query->where('oberta', '=', '1')
+                    
+                    //Permite partidas sin fecha
                         ->orWhere( function($q) {
                             $q->whereNull('data')
                               ->where('oberta',0);
                             })
+                    
                         ->orWhere( 
                                     function($q) {
                                         $q->whereRaw('data >= ADDDATE(now(), INTERVAL -2 DAY)')
                                           ->where('oberta',0);
                                     }
                         );
+                        */
+
+                        $query->whereRaw('data >= ADDDATE(now(), INTERVAL -14 DAY)');
                     })
         ->get();
     }
+
+    private function setStatusPartidas(){
+        Log::debug("Actualizanod Estado de partidas");
+        $partides= Partida::where('oberta',1)->whereRaw('data <= ADDDATE(now(), INTERVAL -2 DAY)')->get();
+        foreach ($partides as $partida){
+            $partida->oberta = 0;
+            $partida->save();
+        }
+
+    }
+
 }
